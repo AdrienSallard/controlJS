@@ -1,0 +1,9 @@
+# Ignore js files transpiled from ts file
+src/**/*.js
+
+# files
+
+files/*
+
+node_modules
+package-lock.json
