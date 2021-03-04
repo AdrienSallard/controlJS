@@ -20,49 +20,55 @@ class PostsController implements Controller {
     this.router.post(this.path, this.createPost);
   }
  
-  private getAllPosts = (request: express.Request, response: express.Response) => {
-    this.post.find()
-      .then((posts) => {
-        response.send(posts);
-      });
+  private getAllPosts = async (request: express.Request, response: express.Response) => {
+    try {
+      const posts = await this.post.find()
+      response.status(200).json(posts);
+    } catch (err) {
+      response.status(404).json({message: err})
+    }
   }
  
-  private getPostById = (request: express.Request, response: express.Response) => {
+  private getPostById = async (request: express.Request, response: express.Response) => {
     const id = request.params.id;
-    this.post.findById(id)
-      .then((post) => {
-        response.send(post);
-      });
+    try {
+      const post = await this.post.findById(id)
+      response.status(200).json(post);
+    } catch (err) {
+      response.status(404).json({message: err})
+    }
   }
  
-  private modifyPost = (request: express.Request, response: express.Response) => {
+  private modifyPost = async (request: express.Request, response: express.Response) => {
     const id = request.params.id;
     const postData: Post = request.body;
-    this.post.findByIdAndUpdate(id, postData, { new: true })
-      .then((post) => {
-        response.send(post);
-      });
+    try {
+      const post = await this.post.findByIdAndUpdate(id, postData, { new: true })
+      response.status(200).json(post);
+    } catch (err) {
+      response.status(404).json({message: err})
+    }
   }
  
-  private createPost = (request: express.Request, response: express.Response) => {
+  private createPost = async (request: express.Request, response: express.Response) => {
     const postData: Post = request.body;
     const createdPost = new this.post(postData);
-    createdPost.save()
-      .then((savedPost) => {
-        response.send(savedPost);
-      });
+    try {
+      const post = await createdPost.save()
+      response.status(200).json(post);
+    } catch (err) {
+      response.status(404).json({message: err})
+    }
   }
  
-  private deletePost = (request: express.Request, response: express.Response) => {
+  private deletePost = async (request: express.Request, response: express.Response) => {
     const id = request.params.id;
-    this.post.findByIdAndDelete(id)
-      .then((successResponse) => {
-        if (successResponse) {
-          response.sendStatus(200);
-        } else {
-          response.sendStatus(404);
-        }
-      });
+    try {
+      await this.post.findByIdAndDelete(id)
+      response.status(200).json({message: 'Bien Supprimé'});
+    } catch (err) {
+      response.status(404).json({message: err})
+    }
   }
 }
  
